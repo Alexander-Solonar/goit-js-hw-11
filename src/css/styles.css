@@ -15,3 +15,22 @@ body {
 
 .search-form {
 }
+
+.gallery {
+  margin: 30px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.photo-card {
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.12), 0px 4px 4px rgba(0, 0, 0, 0.06),
+    1px 4px 6px rgba(0, 0, 0, 0.16);
+}
+
+.info {
+  padding: 0 10px;
+  display: flex;
+  justify-content: space-between;
+}
