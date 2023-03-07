@@ -2,29 +2,42 @@ import './css/styles.css';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { fetchCountries } from './fetchContainers';
+import ApiService from './fetchContainers';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const btnLoad = document.querySelector('.load-more');
-const MY_API_KEY = '34154048-696478ee83ae53950cc89dadb';
+
+const newApiService = new ApiService();
 
 form.addEventListener('submit', onSerarch);
 
 async function onSerarch(e) {
   e.preventDefault();
-
-  const userQuery = e.currentTarget.elements.searchQuery.value;
+  newApiService.query = e.currentTarget.elements.searchQuery.value;
 
   try {
-    const arrayImages = await fetchCountries(MY_API_KEY, userQuery);
-    createMarcup(arrayImages);
+    const arrayImages = await newApiService.fetchCountries();
+    if (arrayImages.hits.length > 0) {
+      Notiflix.Notify.success(
+        `Hooray! We found ${arrayImages.totalHits} images.`
+      );
+    } else {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    }
+    createMarcup(arrayImages.hits);
     let lightbox = new SimpleLightbox('.gallery a');
     lightbox.refresh();
   } catch (error) {
     console.log(error.message);
   }
 }
+
+btnLoad.addEventListener('click', () => {
+  onSerarch();
+});
 
 function createMarcup(images) {
   const markup = images
@@ -57,6 +70,5 @@ function createMarcup(images) {
 </div>`
     )
     .join('');
-
-  gallery.innerHTML = markup;
+  gallery.insertAdjacentHTML('beforeend', markup);
 }
