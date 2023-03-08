@@ -34,3 +34,7 @@ body {
   display: flex;
   justify-content: space-between;
 }
+
+.load-more {
+  margin: 0 auto;
+}
