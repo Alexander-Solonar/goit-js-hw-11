@@ -6,12 +6,10 @@ import ApiService from './fetchContainers';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-const btnLoad = document.querySelector('.load-more');
-
-// btnLoad.style.display = 'none';
 
 const newApiService = new ApiService();
 let lightbox = new SimpleLightbox('.gallery a');
+let isloading = false;
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
@@ -25,41 +23,44 @@ form.addEventListener('submit', async e => {
   onSerarch();
 });
 
-async function showInfoMessage(dataServer) {
+async function onSerarch() {
+  isloading = true;
+
+  const dataServer = await newApiService.fetchCountries();
+
+  if (!dataServer) {
+    notiflixWarning();
+    return;
+  }
   if (newApiService.page === 2) {
-    // btnLoad.style.display = 'block';
     notiflixSuccess(dataServer.totalHits);
   } else if (dataServer.hits.length === 0) {
     notiflixFailure();
-  } else if (dataServer.totalHits / 40 < newApiService.page - 1) {
-    Notiflix.Notify.warning(
-      "We're sorry, but you've reached the end of search results."
-    );
-    // btnLoad.style.display = 'none';
-    return;
   }
-}
-
-async function onSerarch() {
-  const dataServer = await newApiService.fetchCountries();
-
-  showInfoMessage(dataServer);
 
   createMarcup(dataServer.hits);
+  foo();
+  isloading = false;
 }
 
-btnLoad.addEventListener('click', async () => {
-  // btnLoad.style.display = 'none';
-  onSerarch();
-  // btnLoad.style.display = 'block';
+window.addEventListener('scroll', () => {
+  if (isloading) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  if (scrollHeight - scrollTop - 1000 <= clientHeight) {
+    onSerarch();
+  }
 });
 
-const bod = document.querySelector('.container');
+function foo() {
+  const { height: cardHeight } =
+    gallery.firstElementChild.getBoundingClientRect();
 
-document.addEventListener('scroll', e => {
-  // console.log(e);
-  console.log(e.target.scrollingElement.offsetHeight);
-});
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
 
 function createMarcup(images) {
   const markup = images
@@ -103,5 +104,11 @@ function notiflixSuccess(totalHits) {
 function notiflixFailure() {
   Notiflix.Notify.failure(
     'Sorry, there are no images matching your search query. Please try again.'
+  );
+}
+
+function notiflixWarning() {
+  Notiflix.Notify.warning(
+    "We're sorry, but you've reached the end of search results."
   );
 }
