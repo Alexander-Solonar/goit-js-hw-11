@@ -8,16 +8,11 @@ const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const btnLoad = document.querySelector('.load-more');
 
-btnLoad.style.display = 'none';
+// btnLoad.style.display = 'none';
 
 const newApiService = new ApiService();
 let lightbox = new SimpleLightbox('.gallery a');
 
-async function serverResponse() {
-  try {
-    return await newApiService.fetchCountries();
-  } catch (error) {}
-}
 form.addEventListener('submit', async e => {
   e.preventDefault();
   const userInput = e.currentTarget.elements.searchQuery.value.trim();
@@ -27,37 +22,43 @@ form.addEventListener('submit', async e => {
   }
   gallery.innerHTML = '';
   newApiService.resetPage();
-  showInfoMessage();
   onSerarch();
 });
 
-async function showInfoMessage() {
-  const dataServer = await serverResponse();
-  if (dataServer.hits.length > 0) {
-    btnLoad.style.display = 'block';
+async function showInfoMessage(dataServer) {
+  if (newApiService.page === 2) {
+    // btnLoad.style.display = 'block';
     notiflixSuccess(dataServer.totalHits);
   } else if (dataServer.hits.length === 0) {
     notiflixFailure();
+  } else if (dataServer.totalHits / 40 < newApiService.page - 1) {
+    Notiflix.Notify.warning(
+      "We're sorry, but you've reached the end of search results."
+    );
+    // btnLoad.style.display = 'none';
+    return;
   }
 }
 
 async function onSerarch() {
-  const dataServer = await serverResponse();
-  console.log(dataServer);
-  if (dataServer === undefined) {
-    Notiflix.Notify.warning(
-      "We're sorry, but you've reached the end of search results."
-    );
-    btnLoad.style.display = 'none';
-    return;
-  }
+  const dataServer = await newApiService.fetchCountries();
+
+  showInfoMessage(dataServer);
+
   createMarcup(dataServer.hits);
 }
 
 btnLoad.addEventListener('click', async () => {
-  btnLoad.style.display = 'none';
+  // btnLoad.style.display = 'none';
   onSerarch();
-  btnLoad.style.display = 'block';
+  // btnLoad.style.display = 'block';
+});
+
+const bod = document.querySelector('.container');
+
+document.addEventListener('scroll', e => {
+  // console.log(e);
+  console.log(e.target.scrollingElement.offsetHeight);
 });
 
 function createMarcup(images) {
