@@ -6,7 +6,7 @@ import ApiService from './serverResponse';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-buttonUp = document.querySelector('.up');
+const buttonUp = document.querySelector('.up');
 
 buttonUp.style.display = 'none';
 
