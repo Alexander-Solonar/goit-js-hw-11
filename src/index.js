@@ -22,6 +22,7 @@ form.addEventListener('submit', async e => {
     return;
   }
   gallery.innerHTML = '';
+  buttonUp.style.display = 'none';
   newApiService.resetPage();
   onSerarch();
 });
