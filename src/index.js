@@ -55,7 +55,7 @@ window.addEventListener('scroll', () => {
   showButton(scrollTop);
   if (isloading) return;
 
-  if (scrollHeight - scrollTop - 1000 <= clientHeight) {
+  if ((scrollHeight - scrollTop) / 2 <= clientHeight) {
     onSerarch();
   }
 });
