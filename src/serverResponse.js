@@ -2,13 +2,15 @@ import axios from 'axios';
 
 export default class ApiService {
   constructor() {
-    this.searchQuery = '';
-    this.my_key = '34154048-696478ee83ae53950cc89dadb';
     this.page = 0;
+    this.searchQuery = '';
   }
 
-  async fetchCountries() {
-    const url = `https://pixabay.com/api/?key=${this.my_key}&q=${this.searchQuery}&image_type=photo&
+  async serverResponse() {
+    const BASE_URL = 'https://pixabay.com/api/';
+    const my_key = '34154048-696478ee83ae53950cc89dadb';
+    
+    const url = `${BASE_URL}?key=${my_key}&q=${this.searchQuery}&image_type=photo&
     orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`;
     try {
       const response = await axios.get(url);

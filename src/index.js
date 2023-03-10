@@ -2,10 +2,13 @@ import './css/styles.css';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import ApiService from './fetchContainers';
+import ApiService from './serverResponse';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
+buttonUp = document.querySelector('.up');
+
+buttonUp.style.display = 'none';
 
 const newApiService = new ApiService();
 let lightbox = new SimpleLightbox('.gallery a');
@@ -26,20 +29,19 @@ form.addEventListener('submit', async e => {
 async function onSerarch() {
   isloading = true;
 
-  const dataServer = await newApiService.fetchCountries();
+  const dataServer = await newApiService.serverResponse();
 
   if (!dataServer) {
     notiflixWarning();
     return;
   }
-  if (newApiService.page === 2) {
-    notiflixSuccess(dataServer.totalHits);
-  } else if (dataServer.hits.length === 0) {
+  if (dataServer.total === 0) {
     notiflixFailure();
+  } else if (newApiService.page === 2) {
+    notiflixSuccess(dataServer.totalHits);
   }
 
   createMarcup(dataServer.hits);
-  foo();
   isloading = false;
 }
 
@@ -47,17 +49,27 @@ window.addEventListener('scroll', () => {
   if (isloading) return;
 
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  showButton(scrollTop);
   if (scrollHeight - scrollTop - 1000 <= clientHeight) {
     onSerarch();
   }
 });
 
-function foo() {
-  const { height: cardHeight } =
-    gallery.firstElementChild.getBoundingClientRect();
+buttonUp.addEventListener('click', scrollPageUp);
+
+function showButton(scrollTop) {
+  if (scrollTop > 500) {
+    buttonUp.style.display = 'block';
+  } else {
+    buttonUp.style.display = 'none';
+  }
+}
+
+function scrollPageUp() {
+  const { height: cardHeight } = gallery.getBoundingClientRect();
 
   window.scrollBy({
-    top: cardHeight * 2,
+    top: -cardHeight,
     behavior: 'smooth',
   });
 }
