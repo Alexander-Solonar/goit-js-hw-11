@@ -26,7 +26,7 @@ form.addEventListener('submit', async e => {
 
   gallery.innerHTML = '';
   buttonUp.style.display = 'none';
-  
+
   newApiService.resetPage();
   onSerarch();
 });
@@ -51,10 +51,10 @@ async function onSerarch() {
 }
 
 window.addEventListener('scroll', () => {
-  if (isloading) return;
-
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
   showButton(scrollTop);
+  if (isloading) return;
+
   if (scrollHeight - scrollTop - 1000 <= clientHeight) {
     onSerarch();
   }
