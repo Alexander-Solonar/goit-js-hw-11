@@ -16,13 +16,17 @@ let isloading = false;
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
+
   const userInput = e.currentTarget.elements.searchQuery.value.trim();
   newApiService.query = userInput;
+
   if (userInput === '') {
     return;
   }
+
   gallery.innerHTML = '';
   buttonUp.style.display = 'none';
+  
   newApiService.resetPage();
   onSerarch();
 });
